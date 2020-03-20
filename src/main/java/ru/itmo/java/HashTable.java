@@ -20,7 +20,7 @@ public class HashTable {
     }
 
     public HashTable(int initialCapacity, double loadFactor) {
-        capacity = initialCapacity;
+        this.capacity = initialCapacity;
         this.loadFactor = loadFactor;
         recreate();
     }
@@ -30,19 +30,19 @@ public class HashTable {
         if (elementIndex == -1) {
             return null;
         }
+        Object previousValue;
         if (elements[elementIndex] != null) {
-            Object previousValue = elements[elementIndex].getValue();
-            elements[elementIndex].setValue(value);
-            return previousValue;
+            previousValue = elements[elementIndex].getValue();
         } else {
             size++;
-            elements[elementIndex] = new Entry(key, value);
             deleted[elementIndex] = false;
-            if (size >= threshold) {
-                ensureCapacity();
-            }
-            return null;
+            previousValue = null;
         }
+        elements[elementIndex] = new Entry(key, value);
+        if (size >= threshold) {
+            ensureCapacity();
+        }
+        return previousValue;
     }
 
     public Object get(Object key) {
@@ -110,9 +110,9 @@ public class HashTable {
         return i;
     }
 
-    private static class Entry {
-        private Object key;
-        private Object value;
+    private final static class Entry {
+        private final Object key;
+        private final Object value;
 
         public Entry(Object key, Object value) {
             this.key = key;
@@ -125,10 +125,6 @@ public class HashTable {
 
         public Object getValue() {
             return value;
-        }
-
-        public void setValue(Object value) {
-            this.value = value;
         }
     }
 }
